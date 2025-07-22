@@ -88,6 +88,18 @@ if "steps" not in st.session_state:
 if st.session_state.steps:
     plot_voltage(st.session_state.repeat_times)
 
+st.markdown("""
+    <style>
+        [data-testid="stSidebar"][aria-expanded="true"] > div:first-child {
+            width: 350px;
+        }
+        [data-testid="stSidebar"][aria-expanded="false"] > div:first-child {
+            width: 350px;
+            margin-left: -350px;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # Sidebar inputs
 with st.sidebar:
     st.title("UHS Parameters")
