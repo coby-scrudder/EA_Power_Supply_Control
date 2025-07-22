@@ -82,6 +82,9 @@ def plot_voltage(n):
 
 
 # Initialize session state for voltage steps
+if "repeat_times" not in st.session_state:
+    st.session_state.repeat_times = "0"  # or a sensible default like 1
+
 if "steps" not in st.session_state:
     st.session_state.steps = []
 
