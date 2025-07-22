@@ -110,7 +110,12 @@ with st.sidebar:
 
     # Render each step
     for i, step in enumerate(st.session_state.steps):
-        with st.expander(f"🔧 Step #{i+1}", expanded=True):
+        try:
+            title = f"Step {i + 1}: {step['start_voltage']} V → {step['final_voltage']} V in {step['step_time']} sec"
+        except KeyError:
+            title = f"🔧 Step #{i + 1}"
+
+        with st.expander(title, expanded=True):
             col1, col2, col3 = st.columns(3)
             with col1:
                 step["start_voltage"] = st.number_input(
