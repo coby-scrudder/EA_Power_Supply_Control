@@ -169,32 +169,21 @@ with st.sidebar:
 
 with st.sidebar:
     st.markdown("---")
-    if st.button("💾 Save Config"):
+    if st.button("💾 Download Config"):
         st.session_state["awaiting_filename"] = True
 
     if st.session_state["awaiting_filename"]:
-        filename_input = st.text_input("Filename to save as", value="ramp_config.csv", key="save_filename")
-        if st.button("✅ Confirm Save"):
-            df = pd.DataFrame(st.session_state.steps)
-            df.to_csv(f"./config_files/{filename_input}")
-            st.success(f"Configuration saved to `{filename_input}`")
-            st.session_state["awaiting_filename"] = False
+        filename_input = st.text_input("Filename to download", value="ramp_config.csv", key="download_filename")
+        df = pd.DataFrame(st.session_state.steps)
+        csv_data = df.to_csv(index=False).encode("utf-8")
 
-    st.markdown("---")
-    st.text_input("Enter config file to load", value="ramp_config.csv", key="load_filename")
-    if st.button("📂 Load Config From Filename"):
-        config_name = st.session_state["load_filename"]
-        filepath = f"./config_files/{config_name}"
-        if os.path.exists(filepath):
-            try:
-                df = pd.read_csv(filepath)
-                st.session_state.steps = df.to_dict(orient="records")  # Load list of step dicts
-                st.success(f"Loaded configuration from `{config_name}`")
-                st.rerun()  # Refresh UI to show new panels
-            except Exception as e:
-                st.error(f"Error loading config: {e}")
-        else:
-            st.warning(f"No config file named `{config_name}` found.")
+        st.download_button(
+            label="📥 Click to Download",
+            data=csv_data,
+            file_name=filename_input,
+            mime="text/csv"
+        )
+        st.session_state["awaiting_filename"] = False
 
     uploaded_file = st.file_uploader("Upload Config CSV", type="csv", key="config_file")
     if uploaded_file is not None and st.button("📂 Load Uploaded Config"):
