@@ -91,15 +91,19 @@ if st.session_state.steps:
 
 # Sidebar inputs
 with st.sidebar:
-    st.title("UHS Parameters")
+    col_add, col_refresh = st.columns([1, 1])
 
-    # Add button to generate a new step panel
-    if st.button("➕ Add Voltage Step"):
-        st.session_state.steps.append({
-            "start_voltage": 0.0,
-            "final_voltage": 5.0,
-            "step_time": 10.0
-        })
+    with col_add:
+        if st.button("➕ Add Voltage Step"):
+            st.session_state.steps.append({
+                "start_voltage": 0.0,
+                "final_voltage": 5.0,
+                "step_time": 10.0
+            })
+
+    with col_refresh:
+        if st.button("📈 Refresh Graph"):
+            st.rerun()
 
     # Render each step
     for i, step in enumerate(st.session_state.steps):
