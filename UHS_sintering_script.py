@@ -111,7 +111,7 @@ with st.sidebar:
     # Render each step
     for i, step in enumerate(st.session_state.steps):
         try:
-            title = f"Step {i + 1}: {step['start_voltage']} V → {step['final_voltage']} V in {step['step_time']} sec"
+            title = f"**Step {i + 1}:** {step['start_voltage']} V → {step['final_voltage']} V in {step['step_time']} sec"
         except KeyError:
             title = f"🔧 Step #{i + 1}"
 
