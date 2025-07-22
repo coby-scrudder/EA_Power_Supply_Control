@@ -1,0 +1,2 @@
+ramp1_cutoff,ramp1_rate,hold1_time,enable_ramp2,ramp2_cutoff,ramp2_rate,hold2_time,enable_ramp3,ramp3_cutoff,ramp3_rate,hold3_time,enable_final_holds,final_voltage_1,hold_final_1,final_voltage_2,hold_final_2,final_voltage_3,hold_final_3,instant_ramp_down,ramp_down_rate
+12.0,5.0,30.0,True,17.0,5.0,10.0,False,20.0,5.0,10.0,True,18.0,5.0,19.0,3.0,20.0,0.0,True,0.1
