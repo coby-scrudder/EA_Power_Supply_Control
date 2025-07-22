@@ -81,44 +81,6 @@ def plot_voltage(n):
     plot_placeholder.plotly_chart(fig, use_container_width=True)
 
 
-def generate_UHS_script(n):
-    df = pd.DataFrame(st.session_state.steps)
-    voltage_array = []
-    step_resolution = 0.1
-    for a in range(int(n)+1):
-        for i, row in df.iterrows():
-            voltage_array = voltage_array + ramp_voltage(row["start_voltage"], row["final_voltage"], row["step_time"], step_resolution)
-    voltage_array.append(0)
-    current = 80  # A
-    power = 2000  # W
-    timestep_ms = int(step_resolution * 1000)  # ms between steps
-
-    # === CSV Row Assembly ===
-    rows = []
-
-    for i, volt in enumerate(voltage_array):
-        rows.append({
-            "Step": i + 1,
-            "Description": f"Set PS U set= {volt:3f}V Iset= {current:3f}A output/input= on",
-            "U set (V)": round(volt, 3),
-            "I set (A)": current,
-            "P set (W)": power,
-            "Output/Input": "ON",
-            "Hour": 0,
-            "Minute": 0,
-            "Second": 0,
-            "Millisecond": timestep_ms,
-            "R mode": "OFF",
-            "R set": 1
-        })
-
-    # === Output to CSV ===
-    df = pd.DataFrame(rows)
-    df.to_csv("uhs_sequence.csv", sep=";", index=False)
-
-    st.success("✅ CSV file 'uhs_sequence.csv' generated successfully!")
-
-
 # Initialize session state for voltage steps
 if "steps" not in st.session_state:
     st.session_state.steps = []
@@ -160,12 +122,52 @@ with st.sidebar:
                 st.session_state.steps.pop(i)
                 st.rerun()
 
-    repeat_times = st.text_input("Number of times to repeat: ", value="0", key="repeat_times")
+    st.text_input("Number of times to repeat: ", value="0", key="repeat_times")
 
     st.markdown("---")
-    if st.button("Generate UHS Sequence"):
-        generate_UHS_script(repeat_times)
 
+    df = pd.DataFrame(st.session_state.steps)
+    voltage_array = []
+    step_resolution = 0.1
+
+    # Build voltage array with repeats
+    repeat_times = int(st.session_state.get("repeat_times", "0")) + 1
+    for _ in range(repeat_times):
+        for _, row in df.iterrows():
+            voltage_array += ramp_voltage(row["start_voltage"], row["final_voltage"], row["step_time"], step_resolution)
+    voltage_array.append(0)  # Final shutdown
+
+    # Assemble CSV rows
+    current = 80
+    power = 2000
+    timestep_ms = int(step_resolution * 1000)
+
+    rows = []
+    for i, volt in enumerate(voltage_array):
+        rows.append({
+            "Step": i + 1,
+            "Description": f"Set PS U set= {volt:.3f}V Iset= {current:.3f}A output/input= on",
+            "U set (V)": round(volt, 3),
+            "I set (A)": current,
+            "P set (W)": power,
+            "Output/Input": "ON",
+            "Hour": 0,
+            "Minute": 0,
+            "Second": 0,
+            "Millisecond": timestep_ms,
+            "R mode": "OFF",
+            "R set": 1
+        })
+
+    output_df = pd.DataFrame(rows)
+    csv_data = output_df.to_csv(sep=";", index=False).encode("utf-8")
+
+    st.download_button(
+        label="📥 Generate UHS Sequence",
+        data=csv_data,
+        file_name="uhs_sequence.csv",
+        mime="text/csv"
+    )
 
 with st.sidebar:
     st.markdown("---")
