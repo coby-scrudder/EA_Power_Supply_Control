@@ -195,6 +195,8 @@ with st.sidebar:
         )
         st.session_state["awaiting_filename"] = False
 
+    st.markdown("---")
+
     uploaded_file = st.file_uploader("Upload Config CSV", type="csv", key="config_file")
     if uploaded_file is not None and st.button("📂 Load Uploaded Config"):
         try:
