@@ -151,7 +151,7 @@ with st.sidebar:
     voltage_array.append(0)  # Final shutdown
 
     # Assemble CSV rows
-    current = 80
+    current = 90
     power = 2000
     timestep_ms = int(step_resolution * 1000)
 
